@@ -367,6 +367,7 @@ module Sensu
           end
         end
         logger.warn("sqs result=#{result.inspect}")
+        result
       rescue Aws::SQS::Errors::ServiceError => e
         logger.warn(e)
       end
