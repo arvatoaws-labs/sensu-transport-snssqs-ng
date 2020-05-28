@@ -329,6 +329,7 @@ module Sensu
           wait_time_seconds: @settings[:wait_time_seconds],
           max_number_of_messages: @settings[:max_number_of_messages]
         )
+        logger.warn('sqs over')
         logger.warn("sqs resp=#{resp.inspect}")
         result = resp.messages.select do |msg|
           # switching whether to transform the message based on the existance of message_attributes
@@ -369,6 +370,7 @@ module Sensu
         logger.warn("sqs result=#{result.inspect}")
         result
       rescue Aws::SQS::Errors::ServiceError => e
+        logger.warn('Some SQS Error')
         logger.warn(e)
       end
     end
