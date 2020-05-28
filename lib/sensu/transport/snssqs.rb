@@ -119,6 +119,7 @@ module Sensu
 
         unless @subscribing
           do_all_the_time do
+            logger.debug("type of receive_message=#{receive_messages.class} is_array?=#{receive_messages.is_a?(Array)}")
             EM::Iterator.new(receive_messages, 10).each do |msg, iter|
               statsd_time("sqs.#{@settings[:consuming_sqs_queue_url]}.process_timing") do
                 if msg.message_attributes[PIPE_STR].string_value == KEEPALIVES_STR
