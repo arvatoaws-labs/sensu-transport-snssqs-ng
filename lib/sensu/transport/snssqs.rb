@@ -363,12 +363,12 @@ module Sensu
             logger.warn('[transport-snssqs] msg parsed successfully')
             msg
           rescue ::JSON::JSONError => e
-            logger.info(e)
+            logger.warn(e)
           end
         end
         logger.warn("sqs result=#{result.inspect}")
       rescue Aws::SQS::Errors::ServiceError => e
-        logger.info(e)
+        logger.warn(e)
       end
     end
   end
