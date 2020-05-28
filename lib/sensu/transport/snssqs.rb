@@ -328,7 +328,8 @@ module Sensu
           wait_time_seconds: @settings[:wait_time_seconds],
           max_number_of_messages: @settings[:max_number_of_messages]
         )
-        resp.messages.select do |msg|
+        logger.debug("sqs resp=#{resp.inspect}")
+        result = resp.messages.select do |msg|
           # switching whether to transform the message based on the existance of message_attributes
           # if this is a raw SNS message, it exists in the root of the message and no conversion is needed
           # if it doesn't, it is an encapsulated messsage (meaning the SNS message is a stringified JSON in the body of the SQS message)
@@ -364,6 +365,7 @@ module Sensu
             logger.info(e)
           end
         end
+        logger.debug("sqs result=#{result.inspect}")
       rescue Aws::SQS::Errors::ServiceError => e
         logger.info(e)
       end
