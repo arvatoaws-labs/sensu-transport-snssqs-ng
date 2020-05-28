@@ -372,6 +372,7 @@ module Sensu
       rescue Aws::SQS::Errors::ServiceError => e
         logger.warn('Some SQS Error')
         logger.warn(e)
+        []
       end
     end
   end
