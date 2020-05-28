@@ -120,7 +120,7 @@ module Sensu
         unless @subscribing
           do_all_the_time do
             msgs = receive_messages
-            logger.debug("type of receive_message=#{msgs.class} is_array?=#{msgs.is_a?(Array)}")
+            logger.warn("type of receive_message=#{msgs.class} is_array?=#{msgs.is_a?(Array)}")
             EM::Iterator.new(msgs, 10).each do |msg, iter|
               statsd_time("sqs.#{@settings[:consuming_sqs_queue_url]}.process_timing") do
                 if msg.message_attributes[PIPE_STR].string_value == KEEPALIVES_STR
@@ -329,7 +329,7 @@ module Sensu
           wait_time_seconds: @settings[:wait_time_seconds],
           max_number_of_messages: @settings[:max_number_of_messages]
         )
-        logger.debug("sqs resp=#{resp.inspect}")
+        logger.warn("sqs resp=#{resp.inspect}")
         result = resp.messages.select do |msg|
           # switching whether to transform the message based on the existance of message_attributes
           # if this is a raw SNS message, it exists in the root of the message and no conversion is needed
@@ -360,13 +360,13 @@ module Sensu
                 msg.message_attributes[name].data_type = 'String'
               end
             end
-            logger.debug('[transport-snssqs] msg parsed successfully')
+            logger.warn('[transport-snssqs] msg parsed successfully')
             msg
           rescue ::JSON::JSONError => e
             logger.info(e)
           end
         end
-        logger.debug("sqs result=#{result.inspect}")
+        logger.warn("sqs result=#{result.inspect}")
       rescue Aws::SQS::Errors::ServiceError => e
         logger.info(e)
       end
