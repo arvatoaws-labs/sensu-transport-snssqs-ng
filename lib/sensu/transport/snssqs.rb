@@ -120,7 +120,7 @@ module Sensu
         unless @subscribing
           do_all_the_time do
             msgs = receive_messages
-            logger.warn("type of receive_message=#{msgs.class} is_array?=#{msgs.is_a?(Array)}")
+            logger.debug("type of receive_message=#{msgs.class} is_array?=#{msgs.is_a?(Array)}")
             EM::Iterator.new(msgs, 10).each do |msg, iter|
               statsd_time("sqs.#{@settings[:consuming_sqs_queue_url]}.process_timing") do
                 if msg.message_attributes[PIPE_STR].string_value == KEEPALIVES_STR
@@ -322,15 +322,15 @@ module Sensu
       # receive_messages returns an array of SQS messages
       # for the consuming queue
       def receive_messages
-        logger.warn('receive_messages starts')
+        logger.debug('receive_messages starts')
         resp = @sqs.receive_message(
           message_attribute_names: PIPE_ARR,
           queue_url: @settings[:consuming_sqs_queue_url],
           wait_time_seconds: @settings[:wait_time_seconds],
           max_number_of_messages: @settings[:max_number_of_messages]
         )
-        logger.warn('sqs over')
-        logger.warn("sqs resp=#{resp.inspect}")
+        logger.debug('sqs over')
+        logger.debug("sqs resp=#{resp.inspect}")
         result = resp.messages.select do |msg|
           # switching whether to transform the message based on the existance of message_attributes
           # if this is a raw SNS message, it exists in the root of the message and no conversion is needed
@@ -361,13 +361,13 @@ module Sensu
                 msg.message_attributes[name].data_type = 'String'
               end
             end
-            logger.warn('[transport-snssqs] msg parsed successfully')
+            logger.debug('[transport-snssqs] msg parsed successfully')
             msg
           rescue ::JSON::JSONError => e
             logger.warn(e)
           end
         end
-        logger.warn("sqs result=#{result.inspect}")
+        logger.debug("sqs result=#{result.inspect}")
         result.compact
       rescue Aws::SQS::Errors::ServiceError => e
         logger.warn('Some SQS Error')
