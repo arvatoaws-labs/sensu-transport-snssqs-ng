@@ -322,6 +322,7 @@ module Sensu
       # receive_messages returns an array of SQS messages
       # for the consuming queue
       def receive_messages
+        logger.warn('receive_messages starts')
         resp = @sqs.receive_message(
           message_attribute_names: PIPE_ARR,
           queue_url: @settings[:consuming_sqs_queue_url],
